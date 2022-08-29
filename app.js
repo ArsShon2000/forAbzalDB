@@ -6,7 +6,6 @@ require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 const sqlite3 = require('sqlite3').verbose();
-let cursor = sqlite3.cursor
 
 const app = express()
 const bodyParser = require('body-parser')
@@ -35,39 +34,17 @@ app.use(bodyParser.urlencoded({extended: true}))
 
 app.post('/create-db-w', () => {
     db.run(
-        `CREATE TABLE wNum(car_number);`
+        `CREATE TABLE wNum(id INTEGER PRIMARY KEY AUTOINCREMENT, car_number);`
     )
 })
 
 
 app.post('/create-db-b', () => {
     db.run(
-      `CREATE TABLE bNum(car_number);`
+      `CREATE TABLE bNum(id INTEGER PRIMARY KEY AUTOINCREMENT, car_number);`
     )
 })
 
-
-// app.delete('/delete-db-w/:car_number',  () => {
-//   db.run(
-//     // `DROP TABLE wNum`
-
-//     'DELETE FROM wNum where car_number = ?', car_number
-    
-
-//     // 'DELETE FROM wNum WHERE car_number = ?', car_number
-//     // `DROP TABLE wNum WHERE car_number = ?, car_number`
-
-
-//     // `PRAGMA foreign_keys = OFF;
-
-//     // DROP TABLE wNum;
-
-//     // UPDATE wNum
-//     // SET car_number = NULL;
-
-//     // PRAGMA foreign_keys = ON;`
-//   )
-// })
 
 
 app.delete('/delete-db-b', () => {
@@ -78,9 +55,11 @@ app.delete('/delete-db-b', () => {
 
 // delFunction
 app.delete('/wNum/:car_number', (req, res) => {
-  const {carNumber} = req.params.car_number
+  
+  const {car_number} = req.params
+
   const sql = `DELETE FROM wNum WHERE car_number = ?`
-  db.run(sql, carNumber, (error) => {
+  db.run(sql, [car_number], (error) => {
     if (error) return console.error(error);
     res.send({ message: 'Deleted' })
   })
